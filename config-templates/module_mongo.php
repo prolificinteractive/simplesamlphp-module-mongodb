@@ -1,7 +1,6 @@
 <?php
 
 $config = array(
-    'connectionName' => getenv('DB_DEFAULT_CONNECTION'),
     'host' => getenv('DB_MONGODB_HOST'),
     'port' => getenv('DB_MONGODB_PORT'),
     'username' => getenv('DB_MONGODB_USERNAME'),
