@@ -17,7 +17,7 @@
   "require": {
     "php": "^5.3.0",
     "ext-mongo": "*",
-    "prolificinteractive/composer-module-installer": "dev-master"
+    "prolificinteractive/composer-module-installer": "~1.2"
   },
   "repositories": [
     {
