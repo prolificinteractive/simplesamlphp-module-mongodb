@@ -1,0 +1,22 @@
+{
+  "name": "prolificinteractive/simplesamlphp-mongo-module",
+  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB.",
+  "type": "simplesamlphp-module",
+  "keywords": [
+    "simplesamlphp",
+    "modules",
+    "store",
+    "mongodb"
+  ],
+  "authors": [
+    {
+      "name": "Chris Beaton",
+      "email": "c.beaton@prolificinteractive.com"
+    }
+  ],
+  "require": {
+    "php": "^5.3.0",
+    "ext-mongo": "*",
+    "simplesamlphp/composer-module-installer": "~1.0"
+  }
+}
