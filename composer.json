@@ -17,6 +17,12 @@
   "require": {
     "php": "^5.3.0",
     "ext-mongo": "*",
-    "simplesamlphp/composer-module-installer": "~1.0"
-  }
+    "prolificinteractive/composer-module-installer": "~1.2"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/prolificinteractive/composer-module-installer.git"
+    }
+  ]
 }
