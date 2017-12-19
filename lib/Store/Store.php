@@ -17,8 +17,6 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
     {
         $config = SimpleSAML_Configuration::getConfig('module_mongo.php');
         $connectionDetails = array_merge($config->toArray(), $connectionDetails);
-        SimpleSAML_Logger::info('Connection Details:');
-        SimpleSAML_Logger::info(var_export($connectionDetails, 1));
         $this->connection = new MongoClient($this->createConnectionURI($connectionDetails));
         $this->db = $this->connection->{$connectionDetails['database']};
     }
@@ -47,8 +45,6 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
                 $connectionURI .= "&readPreference=${connectionDetails['readPreference']}";
             }
         }
-
-        SimpleSAML_Logger::info("Mongo connection URI: $connectionURI");
 
         return $connectionURI;
     }
