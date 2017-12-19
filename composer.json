@@ -2,6 +2,7 @@
   "name": "prolificinteractive/simplesamlphp-module-mongo",
   "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB.",
   "type": "simplesamlphp-module",
+  "license": "MIT",
   "keywords": [
     "simplesamlphp",
     "modules",
