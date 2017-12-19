@@ -31,8 +31,7 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
         $seedList = implode(',', array_map(function($host) use ($port) {
             return "$host:$port";
         }, is_array($host) ? $host : explode(',', $host)));
-
-
+        
         $connectionURI = "mongodb://"
             .((!empty($connectionDetails['username']) && !empty($connectionDetails['password']))
                 ? "${connectionDetails['username']}:${connectionDetails['password']}@"
