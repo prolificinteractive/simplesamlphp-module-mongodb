@@ -31,7 +31,7 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
         $seedList = implode(',', array_map(function($host) use ($port) {
             return "$host:$port";
         }, is_array($host) ? $host : explode(',', $host)));
-        
+
         $connectionURI = "mongodb://"
             .((!empty($connectionDetails['username']) && !empty($connectionDetails['password']))
                 ? "${connectionDetails['username']}:${connectionDetails['password']}@"
@@ -69,14 +69,9 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
         if(isset($document['expire_at'])) {
             $expireAt = $document['expire_at'];
             if($expireAt <= time()) {
-                $status = $collection->remove(array(
+                $collection->remove(array(
                     'session_id' => $key
                 ));
-                if(!$status) {
-                    SimpleSAML_Logger::error("Failed to remove expired document $type.$key");
-                } else {
-                    SimpleSAML_Logger::info("Removed expired document: $type:$key");
-                }
 
                 return NULL;
             }
@@ -113,25 +108,15 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
         if($document) {
             $document['payload'] = serialize($value);
             $document['expire_at'] = $expire;
-            $status = $collection->update(array(
+            $collection->update(array(
                 'session_id' => $key
             ), $document);
-            if(!$status) {
-                SimpleSAML_Logger::error("Failed to update document $type.$key with value: " . var_export($value, 1));
-            } else {
-                SimpleSAML_Logger::info("Updated document: $type:$key");
-            }
         } else {
-            $status = $collection->insert(array(
+            $collection->insert(array(
                 'session_id' => $key,
                 'payload' => serialize($value),
                 'expire_at' => $expire
             ));
-            if(!$status) {
-                SimpleSAML_Logger::error("Failed to create document $type.$key with value: " . var_export($value, 1));
-            } else {
-                SimpleSAML_Logger::info("Created document: $type:$key");
-            }
         }
 
         return $expire;
@@ -149,14 +134,9 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
         assert('is_string($key)');
 
         $collection = $this->db->{$type};
-        $status = $collection->remove(array(
+        $collection->remove(array(
             'session_id' => $key
         ));
-        if(!$status) {
-            SimpleSAML_Logger::error("Failed to delete document: $type.$key");
-        } else {
-            SimpleSAML_Logger::info("Deleted document: $type:$key");
-        }
     }
 
     /**
