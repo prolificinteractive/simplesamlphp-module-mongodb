@@ -34,7 +34,7 @@ final class StoreTest extends TestCase
 
         $type = 'session';
         $key = 'SESSION_ID';
-        $value = ['some' => 'thing'];
+        $value = array('some' => 'thing');
         $expire = time() + 1000000;
 
         $result = $store->get($type, $key);
@@ -59,7 +59,7 @@ final class StoreTest extends TestCase
 
         $type = 'session';
         $key = 'SESSION_ID';
-        $value = ['some' => 'thing'];
+        $value = array('some' => 'thing');
         $expire = 0;
         $store->set($type, $key, $value, $expire);
         $this->assertEquals(1, $collection->count());
@@ -80,7 +80,7 @@ final class StoreTest extends TestCase
 
         $type = 'session';
         $key = 'SESSION_ID';
-        $value = ['some' => 'thing'];
+        $value = array('some' => 'thing');
         $expire = time() + 1000000;
 
         $result = $store->get($type, $key);
@@ -93,7 +93,7 @@ final class StoreTest extends TestCase
         $this->assertEquals($result, $value);
         $this->assertEquals(1, $collection->count());
 
-        $value = ['some' => 'otherthing'];
+        $value = array('some' => 'otherthing');
         $result = $store->set($type, $key, $value, $expire);
         $this->assertEquals(1, $collection->count());
         $this->assertEquals($expire, $result);
@@ -113,7 +113,7 @@ final class StoreTest extends TestCase
 
         $type = 'session';
         $key = 'SESSION_ID';
-        $value = ['some' => 'thing'];
+        $value = array('some' => 'thing');
         $expire = time() + 1000000;
         $store->set($type, $key, $value, $expire);
         $this->assertEquals(1, $collection->count());
