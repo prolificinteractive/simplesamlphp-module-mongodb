@@ -1,9 +1,21 @@
 <?php
+/**
+ * This file is part of the simplesamlphp-module-mongo.
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source
+ * code.
+ *
+ * @author Chris Beaton <c.beaton@prolificinteractive.com>
+ * @package prolificinteractive/simplesamlphp-module-mongo
+ */
+
+use SimpleSAML\Store;
 
 /**
  * Class sspmod_mongo_Store_Store
+ *
  */
-class sspmod_mongo_Store_Store extends SimpleSAML_Store
+class sspmod_mongo_Store_Store extends Store
 {
     protected $connection;
     protected $db;
@@ -22,8 +34,10 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
     }
 
     /**
-     * @param array $connectionDetails
-     * @return string
+     * Builds the connection URI from the specified connection details.
+     *
+     * @param array $connectionDetails An array of arguments to the database connection URI.
+     * @return string The connection URI.
      */
     static function createConnectionURI($connectionDetails = array()) {
         $port = $connectionDetails['port'];
@@ -140,7 +154,9 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
     }
 
     /**
-     * @return \MongoClient
+     * Returns a new database connection object.
+     *
+     * @return \MongoClient The database connection object.
      */
     public function getConnection()
     {
@@ -148,26 +164,12 @@ class sspmod_mongo_Store_Store extends SimpleSAML_Store
     }
 
     /**
-     * @param \MongoClient $connection
+     * Sets the database connection for this store.
+     *
+     * @param \MongoClient $connection A database connection object.
      */
     public function setConnection($connection)
     {
         $this->connection = $connection;
-    }
-
-    /**
-     * @return \MongoDB
-     */
-    public function getDb()
-    {
-        return $this->db;
-    }
-
-    /**
-     * @param \MongoDB $db
-     */
-    public function setDb($db)
-    {
-        $this->db = $db;
     }
 }

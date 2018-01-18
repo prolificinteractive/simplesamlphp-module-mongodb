@@ -11,7 +11,7 @@ The mongo module is an implementation of a SimpleSAMLphp (SSP) data store.
 
 ## Requirements
 
-PHP 5.3 through 5.6 
+PHP 5.3.3 through 5.6 
 
 [SimpleSAMLphp](https://simplesamlphp.org/)
 
