@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php">
+    <php>
+        <env name="DB_DEFAULT_CONNECTION" value="mongodb"/>
+        <env name="DB_MONGODB_HOST" value="localhost"/>
+        <env name="DB_MONGODB_PORT" value="27017"/>
+        <env name="DB_MONGODB_USERNAME" value=""/>
+        <env name="DB_MONGODB_PASSWORD" value=""/>
+        <env name="DB_MONGODB_DATABASE" value="test"/>
+    </php>
+    <testsuites>
+        <testsuite name="Store Tests">
+            <directory suffix="Test.php">tests/lib/Store</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

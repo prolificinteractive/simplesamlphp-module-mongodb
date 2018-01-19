@@ -1,6 +1,6 @@
 # SimpleSAMLphp Mongo Module
 
-[![Travis build status](https://img.shields.io/travis/prolificinteractive/PROJECT_NAME.svg?style=flat-square)](https://travis-ci.org/prolificinteractive/PROJECT_NAME)
+[![Travis build status](https://img.shields.io/travis/prolificinteractive/simplesamlphp-module-mongo.svg?style=flat-square)](https://travis-ci.org/prolificinteractive/simplesamlphp-module-mongo)
 
 The mongo module is an implementation of a SimpleSAMLphp (SSP) data store.   
 
@@ -11,7 +11,7 @@ The mongo module is an implementation of a SimpleSAMLphp (SSP) data store.
 
 ## Requirements
 
-PHP 5.3 through 5.6 
+PHP 5.4 through 5.6 
 
 [SimpleSAMLphp](https://simplesamlphp.org/)
 
