@@ -1,0 +1,13 @@
+language: php
+
+php:
+  - '5.4'
+  - '5.5'
+  - '5.6'
+
+services: mongodb
+
+before_script:
+  - sleep 15
+before_install: echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+install: travis_retry composer update --no-interaction --no-progress --no-suggest --prefer-stable
