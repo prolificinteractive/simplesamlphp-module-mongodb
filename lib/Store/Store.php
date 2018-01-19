@@ -9,7 +9,7 @@
  * @package prolificinteractive/simplesamlphp-module-mongo
  */
 
-use SimpleSAML\Store;
+use \SimpleSAML\Store;
 
 /**
  * Class sspmod_mongo_Store_Store
