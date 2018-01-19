@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": "^5.3.3",
+    "php": "^5.4",
     "ext-mongo": "*",
     "simplesamlphp/composer-module-installer": "~1.0"
   },
