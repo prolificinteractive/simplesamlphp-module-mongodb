@@ -1,6 +1,6 @@
 {
-  "name": "prolificinteractive/simplesamlphp-module-mongo",
-  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB.",
+  "name": "jlfalcon/simplesamlphp-module-mongo",
+  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB in PHP7.0.",
   "type": "simplesamlphp-module",
   "license": "MIT",
   "keywords": [
