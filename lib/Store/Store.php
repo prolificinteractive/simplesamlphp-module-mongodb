@@ -33,8 +33,8 @@ class sspmod_mongo_Store_Store extends Store
 	    $options = [];
         $config = SimpleSAML_Configuration::getConfig('module_mongo.php');
         $connectionDetails = array_merge($config->toArray(), $connectionDetails);
-        if (!empty($config['replicaSet'])) {
-        	$options['replicaSet'] = $config['replicaSet'];
+        if (!empty($connectionDetails['replicaSet'])) {
+        	$options['replicaSet'] = $connectionDetails['replicaSet'];
         }
         $this->manager = new Manager($this->createConnectionURI($connectionDetails), $options);
         $this->dbName = $connectionDetails['database'];
@@ -94,6 +94,8 @@ class sspmod_mongo_Store_Store extends Store
 	    if (false === ($cursor = current($cursor->toArray()))) {
 		    return null;
 	    }
+
+	    $cursor = (array) $cursor;
 
         if(isset($cursor['expire_at'])) {
             $expireAt = $cursor['expire_at'];
