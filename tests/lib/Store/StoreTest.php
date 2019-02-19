@@ -32,17 +32,9 @@ final class StoreTest extends TestCase
         $manager = $store->getManager();
 
         // Remove everything in the collection first
-        $bulk = new BulkWrite();
-        $bulk->delete([]);
-        $namespace = getenv('DB_MONGODB_DATABASE') . '.session';
+        $this->clearSessions($manager);
 
-        $manager->executeBulkWrite($namespace, $bulk);
-
-        // Check how many records are in the Sessions
-        $countQuery = new Query([]);
-        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
-
-        $this->assertEquals(0, count($countQueryResult->toArray()));
+        $this->assertEquals(0, $this->getSessionCount($manager));
 
         $type = 'session';
         $key = 'SESSION_ID';
@@ -55,47 +47,43 @@ final class StoreTest extends TestCase
 
         $store->set($type, $key, $value, $expire);
 
-        // Check that the Session was inserted
-        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
-
-        $this->assertEquals(1, count($countQueryResult->toArray()));
+        $this->assertEquals(1, $this->getSessionCount($manager));
 
         $result = $store->get($type, $key);
         $this->assertEquals($result, $value);
 
-        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
-        $this->assertEquals(1, count($countQueryResult->toArray()));
+        $this->assertEquals(1, $this->getSessionCount($manager));
     }
 
     public function testExpiredGet()
     {
         $store = new \sspmod_mongo_Store_Store();
-        $connection = $store->getConnection();
-        $database = getenv('DB_MONGODB_DATABASE');
-        $collection = $connection->{$database}->session;
-        $collection->remove();
-        $this->assertEquals(0, $collection->count());
+        $manager = $store->getManager();
+
+        $this->clearSessions($manager);
+
+        $this->assertEquals(0, $this->getSessionCount($manager));
 
         $type = 'session';
         $key = 'SESSION_ID';
         $value = array('some' => 'thing');
         $expire = 0;
         $store->set($type, $key, $value, $expire);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
 
         $result = $store->get($type, $key);
         $this->assertNull($result);
-        $this->assertEquals(0, $collection->count());
+        $this->assertEquals(0, $this->getSessionCount($manager));
     }
 
     public function testSet()
     {
         $store = new \sspmod_mongo_Store_Store();
-        $connection = $store->getConnection();
-        $database = getenv('DB_MONGODB_DATABASE');
-        $collection = $connection->{$database}->session;
-        $collection->remove();
-        $this->assertEquals(0, $collection->count());
+        $manager = $store->getManager();
+
+        $this->clearSessions($manager);
+
+        $this->assertEquals(0, $this->getSessionCount($manager));
 
         $type = 'session';
         $key = 'SESSION_ID';
@@ -106,38 +94,70 @@ final class StoreTest extends TestCase
         $this->assertNull($result);
 
         $store->set($type, $key, $value, $expire);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
 
         $result = $store->get($type, $key);
         $this->assertEquals($result, $value);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
 
         $value = array('some' => 'otherthing');
         $result = $store->set($type, $key, $value, $expire);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
         $this->assertEquals($expire, $result);
         $result = $store->get($type, $key);
         $this->assertEquals($result, $value);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
     }
 
     public function testDelete()
     {
         $store = new \sspmod_mongo_Store_Store();
-        $connection = $store->getConnection();
-        $database = getenv('DB_MONGODB_DATABASE');
-        $collection = $connection->{$database}->session;
-        $collection->remove();
-        $this->assertEquals(0, $collection->count());
+        $manager = $store->getManager();
+
+        $this->clearSessions($manager);
+
+        $this->assertEquals(0, $this->getSessionCount($manager));
 
         $type = 'session';
         $key = 'SESSION_ID';
         $value = array('some' => 'thing');
         $expire = time() + 1000000;
         $store->set($type, $key, $value, $expire);
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(1, $this->getSessionCount($manager));
 
         $store->delete($type, $key);
-        $this->assertEquals(0, $collection->count());
+        $this->assertEquals(0, $this->getSessionCount($manager));
+    }
+
+    protected function getSessionNamespace()
+    {
+        return getenv('DB_MONGODB_DATABASE') . '.session';
+    }
+
+    /**
+     * Purge all records in the Sessions collection
+     * @param \MongoDb\Driver\Manager $manager
+     */
+    protected function clearSessions(Manager $manager)
+    {
+        $bulk = new BulkWrite();
+        $bulk->delete([]);
+
+        $manager->executeBulkWrite($this->getSessionNamespace(), $bulk);
+    }
+
+    /**
+     * Get count of a given namespace (database/collection pair)
+     * @param \MongoDb\Driver\Manager $manager
+     * @return integer
+     */
+    protected function getSessionCount(Manager $manager)
+    {
+        $countQuery = new Query([]);
+        $countQueryResult = $manager->executeQuery($this->getSessionNamespace(), $countQuery);
+
+        $countResultArray = !empty($countQueryResult) ? $countQueryResult->toArray() : [];
+
+        return count($countResultArray);
     }
 }
