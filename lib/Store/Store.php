@@ -35,6 +35,9 @@ class sspmod_mongo_Store_Store extends Store
         $connectionDetails = array_merge($config->toArray(), $connectionDetails);
         if (!empty($connectionDetails['replicaSet'])) {
         	$options['replicaSet'] = $connectionDetails['replicaSet'];
+        	if(!empty($connectionDetails['readPreference'])) {
+        	    $options['readPreference'] = $connectionDetails['readPreference'];
+            }
         }
         $this->manager = new Manager($this->createConnectionURI($connectionDetails), $options);
         $this->dbName = $connectionDetails['database'];
@@ -58,13 +61,6 @@ class sspmod_mongo_Store_Store extends Store
                 ? "${connectionDetails['username']}:${connectionDetails['password']}@"
                 : '')
             ."${seedList}";
-           // ."/${connectionDetails['database']}";
-        /*if(!empty($connectionDetails['replicaSet'])) {
-            $connectionURI .= "?replicaSet=${connectionDetails['replicaSet']}";
-            if(!empty($connectionDetails['readPreference'])) {
-                $connectionURI .= "&readPreference=${connectionDetails['readPreference']}";
-            }
-        }*/
 
         return $connectionURI;
     }
@@ -83,31 +79,30 @@ class sspmod_mongo_Store_Store extends Store
         assert('is_string($key)');
 
         $where = [
-        	'session_id' => $key
+            'session_id' => $key,
         ];
         $query = new Query($where, ['limit' => 1]);
 
-        $namespace = "{$this->dbName}.{$type}";
+        $cursor = $this->manager->executeQuery($this->getMongoNamespace($type), $query);
 
-        $cursor = $this->manager->executeQuery($namespace, $query);
+        if (false === ($cursor = current($cursor->toArray()))) {
+            return null;
+        }
 
-	    if (false === ($cursor = current($cursor->toArray()))) {
-		    return null;
-	    }
+        $cursor = (array) $cursor;
 
-	    $cursor = (array) $cursor;
-
-        if(isset($cursor['expire_at'])) {
+        if (isset($cursor['expire_at'])) {
             $expireAt = $cursor['expire_at'];
-            if($expireAt <= time()) {
-            	$this->delete($type, $key);
+            if ($expireAt <= time()) {
+                $this->delete($type, $key);
 
-                return NULL;
+                return null;
             }
         }
 
-        if(!empty($cursor['payload'])) {
+        if (! empty($cursor['payload'])) {
             $payload = unserialize($cursor['payload']);
+
             return $payload;
         }
 
@@ -141,7 +136,7 @@ class sspmod_mongo_Store_Store extends Store
 
         $bulk = new BulkWrite();
         $bulk->update(['session_id' => $key], $document, $options);
-        $this->manager->executeBulkWrite($this->_getNamespace($type), $bulk);
+        $this->manager->executeBulkWrite($this->getMongoNamespace($type), $bulk);
 
         return $expire;
     }
@@ -160,11 +155,21 @@ class sspmod_mongo_Store_Store extends Store
         $bulk = new BulkWrite();
         $bulk->delete(['session_id' => $key]);
 
-        $this->manager->executeBulkWrite($this->_getNamespace($type), $bulk);
+        $this->manager->executeBulkWrite($this->getMongoNamespace($type), $bulk);
     }
 
-    protected function _getNamespace($type)
+    protected function getMongoNamespace($type)
     {
     	return "{$this->dbName}.{$type}";
+    }
+
+    public function getManager()
+    {
+        return !empty($this->manager) ? $this->manager : NULL;
+    }
+
+    public function getDatabase()
+    {
+        return !empty($this->dbName) ? $this->dbName : NULL;
     }
 }

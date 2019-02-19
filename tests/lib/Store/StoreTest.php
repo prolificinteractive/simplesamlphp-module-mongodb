@@ -12,6 +12,9 @@
 namespace SimpleSAML\Test\Module\mongo\Store;
 
 use PHPUnit\Framework\TestCase;
+use MongoDb\Driver\Manager;
+use MongoDb\Driver\Query;
+use MongoDb\Driver\BulkWrite;
 use \SimpleSAML_Configuration as Configuration;
 
 final class StoreTest extends TestCase
@@ -26,26 +29,42 @@ final class StoreTest extends TestCase
     public function testGet()
     {
         $store = new \sspmod_mongo_Store_Store();
-        $connection = $store->getConnection();
-        $database = getenv('DB_MONGODB_DATABASE');
-        $collection = $connection->{$database}->session;
-        $collection->remove();
-        $this->assertEquals(0, $collection->count());
+        $manager = $store->getManager();
+
+        // Remove everything in the collection first
+        $bulk = new BulkWrite();
+        $bulk->delete([]);
+        $namespace = getenv('DB_MONGODB_DATABASE') . '.session';
+
+        $manager->executeBulkWrite($namespace, $bulk);
+
+        // Check how many records are in the Sessions
+        $countQuery = new Query([]);
+        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
+
+        $this->assertEquals(0, count($countQueryResult->toArray()));
 
         $type = 'session';
         $key = 'SESSION_ID';
         $value = array('some' => 'thing');
         $expire = time() + 1000000;
 
+        // Check that the non-existent Session does not exist
         $result = $store->get($type, $key);
         $this->assertNull($result);
 
         $store->set($type, $key, $value, $expire);
-        $this->assertEquals(1, $collection->count());
+
+        // Check that the Session was inserted
+        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
+
+        $this->assertEquals(1, count($countQueryResult->toArray()));
 
         $result = $store->get($type, $key);
         $this->assertEquals($result, $value);
-        $this->assertEquals(1, $collection->count());
+
+        $countQueryResult = $manager->executeQuery($namespace, $countQuery);
+        $this->assertEquals(1, count($countQueryResult->toArray()));
     }
 
     public function testExpiredGet()
