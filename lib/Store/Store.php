@@ -75,8 +75,8 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function get($type, $key)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
+        assert(is_string($type));
+        assert(is_string($key));
 
         $where = [
             'session_id' => $key,
@@ -120,9 +120,9 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function set($type, $key, $value, $expire = null)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
-        assert('is_null($expire) || is_int($expire)');
+        assert(is_string($type));
+        assert(is_string($key));
+        assert(is_null($expire) || is_int($expire));
 
         $document = [
             'session_id' => $key,
@@ -149,8 +149,8 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function delete($type, $key)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
+        assert(is_string($type));
+        assert(is_string($key));
 
         $bulk = new BulkWrite();
         $bulk->delete(['session_id' => $key]);
