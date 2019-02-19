@@ -11,13 +11,13 @@ The mongo module is an implementation of a SimpleSAMLphp (SSP) data store.
 
 ## Requirements
 
-PHP 7.0
+PHP 5.5 or higher
 
 [SimpleSAMLphp](https://simplesamlphp.org/)
 
 [MongoDB](https://www.mongodb.com/)
 
-[Mongo PHP extension](http://php.net/manual/en/book.mongodb.php)
+[MongoDB PHP extension](http://php.net/manual/en/book.mongodb.php)
 
 ## Installation
 
@@ -47,7 +47,7 @@ DB_DEFAULT_CONNECTION   # Must contain the substring "_replica"
 DB_MONGODB_REPLICASET
 DB_MONGODB_READ_PREFERENCE
 ```
-See the [Mongo extension PHP Manual](http://php.net/manual/en/mongo.manual.php) for more information about appropriate values for `DB_MONGODB_REPLICASET` and `DB_MONGODB_READ_PREFERENCE`. 
+See the [MongoDB extension PHP Manual](http://php.net/manual/en/set.mongodb.php) for more information about appropriate values for `DB_MONGODB_REPLICASET` and `DB_MONGODB_READ_PREFERENCE`. 
 
 Finally, you can enable the module by creating an empty file name `enable` in the `vendor/simplesamlphp/simplesamlphp/modules/mongo` directory.
 
