@@ -1,6 +1,6 @@
 {
   "name": "prolificinteractive/simplesamlphp-module-mongo",
-  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB in PHP7.0.",
+  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB in PHP 5.5 or higher.",
   "type": "simplesamlphp-module",
   "license": "MIT",
   "keywords": [
