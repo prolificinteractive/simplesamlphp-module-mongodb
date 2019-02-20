@@ -1,8 +1,8 @@
-# SimpleSAMLphp Mongo Module
+# SimpleSAMLphp MongoDB Module
 
 [![Travis build status](https://img.shields.io/travis/prolificinteractive/simplesamlphp-module-mongo.svg?style=flat-square)](https://travis-ci.org/prolificinteractive/simplesamlphp-module-mongo)
 
-The mongo module is an implementation of a SimpleSAMLphp (SSP) data store.   
+This module is an implementation of a SimpleSAMLphp (SSP) data store to add support for the MongoDB PHP library.   
 
 ## Features
 
@@ -23,9 +23,9 @@ PHP 5.5 or higher
 
 If your project manages SSP with [Composer](https://getcomposer.org/) run:
 ```
-php composer.phar require prolificinteractive/simplesamlphp-module-mongo
+php composer.phar require prolificinteractive/simplesamlphp-module-mongodb
 ```
-This command will add `prolificinteractive/simplesamlphp-module-mongo` to your projects' composer.json file and install the module 
+This command will add `prolificinteractive/simplesamlphp-module-mongodb` to your projects' composer.json file and install the module 
 into SSP's `modules` directory, which relative to your project's root directory is conventionally `vendor/simplesamlphp/simplesamlphp/modules`.
 
 ## Usage
