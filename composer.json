@@ -1,6 +1,6 @@
 {
-  "name": "prolificinteractive/simplesamlphp-module-mongo",
-  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB.",
+  "name": "prolificinteractive/simplesamlphp-module-mongodb",
+  "description": "A SimpleSAMLphp module to provide a SimpleSAML_Store implementation for MongoDB in PHP 5.5 or higher.",
   "type": "simplesamlphp-module",
   "license": "MIT",
   "keywords": [
@@ -13,11 +13,16 @@
     {
       "name": "Chris Beaton",
       "email": "c.beaton@prolificinteractive.com"
+    },
+    {
+      "name": "Connor Cook",
+      "email": "connor@prolificinteractive.com",
+      "homepage": "https://www.prolificinteractive.com/"
     }
   ],
   "require": {
-    "php": "^5.4",
-    "ext-mongo": "*",
+    "php": "^5.5 || ^7.0",
+    "ext-mongodb": "1.*",
     "simplesamlphp/composer-module-installer": "~1.0"
   },
   "require-dev": {

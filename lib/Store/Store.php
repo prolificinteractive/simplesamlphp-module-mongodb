@@ -10,6 +10,9 @@
  */
 
 use \SimpleSAML\Store;
+use MongoDb\Driver\Manager;
+use MongoDb\Driver\Query;
+use MongoDb\Driver\BulkWrite;
 
 /**
  * Class sspmod_mongo_Store_Store
@@ -17,8 +20,8 @@ use \SimpleSAML\Store;
  */
 class sspmod_mongo_Store_Store extends Store
 {
-    protected $connection;
-    protected $db;
+    protected $manager;
+    protected $dbName;
 
     /**
      * sspmod_mongo_Store_Store constructor.
@@ -27,10 +30,17 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function __construct($connectionDetails = array())
     {
+	    $options = [];
         $config = SimpleSAML_Configuration::getConfig('module_mongo.php');
         $connectionDetails = array_merge($config->toArray(), $connectionDetails);
-        $this->connection = new MongoClient($this->createConnectionURI($connectionDetails));
-        $this->db = $this->connection->{$connectionDetails['database']};
+        if (!empty($connectionDetails['replicaSet'])) {
+        	$options['replicaSet'] = $connectionDetails['replicaSet'];
+        	if(!empty($connectionDetails['readPreference'])) {
+        	    $options['readPreference'] = $connectionDetails['readPreference'];
+            }
+        }
+        $this->manager = new Manager($this->createConnectionURI($connectionDetails), $options);
+        $this->dbName = $connectionDetails['database'];
     }
 
     /**
@@ -50,14 +60,7 @@ class sspmod_mongo_Store_Store extends Store
             .((!empty($connectionDetails['username']) && !empty($connectionDetails['password']))
                 ? "${connectionDetails['username']}:${connectionDetails['password']}@"
                 : '')
-            ."${seedList}"
-            ."/${connectionDetails['database']}";
-        if(!empty($connectionDetails['replicaSet'])) {
-            $connectionURI .= "?replicaSet=${connectionDetails['replicaSet']}";
-            if(!empty($connectionDetails['readPreference'])) {
-                $connectionURI .= "&readPreference=${connectionDetails['readPreference']}";
-            }
-        }
+            ."${seedList}";
 
         return $connectionURI;
     }
@@ -72,31 +75,38 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function get($type, $key)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
+        assert(is_string($type));
+        assert(is_string($key));
 
-        $collection = $this->db->{$type};
-        $document = $collection->findOne(array(
-            'session_id' => $key
-        ));
+        $where = [
+            'session_id' => $key,
+        ];
+        $query = new Query($where, ['limit' => 1]);
 
-        if(isset($document['expire_at'])) {
-            $expireAt = $document['expire_at'];
-            if($expireAt <= time()) {
-                $collection->remove(array(
-                    'session_id' => $key
-                ));
+        $cursor = $this->manager->executeQuery($this->getMongoNamespace($type), $query);
 
-                return NULL;
+        if (false === ($cursor = current($cursor->toArray()))) {
+            return null;
+        }
+
+        $cursor = (array) $cursor;
+
+        if (isset($cursor['expire_at'])) {
+            $expireAt = $cursor['expire_at'];
+            if ($expireAt <= time()) {
+                $this->delete($type, $key);
+
+                return null;
             }
         }
 
-        if(!empty($document['payload'])) {
-            $payload = unserialize($document['payload']);
+        if (! empty($cursor['payload'])) {
+            $payload = unserialize($cursor['payload']);
+
             return $payload;
         }
 
-        return $document;
+        return $cursor;
     }
 
     /**
@@ -110,28 +120,23 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function set($type, $key, $value, $expire = null)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
-        assert('is_null($expire) || is_int($expire)');
+        assert(is_string($type));
+        assert(is_string($key));
+        assert(is_null($expire) || is_int($expire));
 
-        $collection = $this->db->{$type};
-        $document = $collection->findOne(array(
-            'session_id' => $key
-        ));
+        $document = [
+            'session_id' => $key,
+            'payload' => serialize($value),
+            'expire_at' => $expire
+        ];
 
-        if($document) {
-            $document['payload'] = serialize($value);
-            $document['expire_at'] = $expire;
-            $collection->update(array(
-                'session_id' => $key
-            ), $document);
-        } else {
-            $collection->insert(array(
-                'session_id' => $key,
-                'payload' => serialize($value),
-                'expire_at' => $expire
-            ));
-        }
+        $options = [
+            'upsert' => true
+        ];
+
+        $bulk = new BulkWrite();
+        $bulk->update(['session_id' => $key], $document, $options);
+        $this->manager->executeBulkWrite($this->getMongoNamespace($type), $bulk);
 
         return $expire;
     }
@@ -144,32 +149,27 @@ class sspmod_mongo_Store_Store extends Store
      */
     public function delete($type, $key)
     {
-        assert('is_string($type)');
-        assert('is_string($key)');
+        assert(is_string($type));
+        assert(is_string($key));
 
-        $collection = $this->db->{$type};
-        $collection->remove(array(
-            'session_id' => $key
-        ));
+        $bulk = new BulkWrite();
+        $bulk->delete(['session_id' => $key]);
+
+        $this->manager->executeBulkWrite($this->getMongoNamespace($type), $bulk);
     }
 
-    /**
-     * Returns a new database connection object.
-     *
-     * @return \MongoClient The database connection object.
-     */
-    public function getConnection()
+    protected function getMongoNamespace($type)
     {
-        return $this->connection;
+    	return "{$this->dbName}.{$type}";
     }
 
-    /**
-     * Sets the database connection for this store.
-     *
-     * @param \MongoClient $connection A database connection object.
-     */
-    public function setConnection($connection)
+    public function getManager()
     {
-        $this->connection = $connection;
+        return !empty($this->manager) ? $this->manager : NULL;
+    }
+
+    public function getDatabase()
+    {
+        return !empty($this->dbName) ? $this->dbName : NULL;
     }
 }
