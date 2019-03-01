@@ -1,6 +1,6 @@
 # SimpleSAMLphp MongoDB Module
 
-[![Travis build status](https://img.shields.io/travis/prolificinteractive/simplesamlphp-module-mongo.svg?style=flat-square)](https://travis-ci.org/prolificinteractive/simplesamlphp-module-mongo)
+[![Travis build status](https://img.shields.io/travis/prolificinteractive/simplesamlphp-module-mongodb.svg?style=flat-square&branch=master)](https://travis-ci.org/prolificinteractive/simplesamlphp-module-mongodb)
 
 This module is an implementation of a SimpleSAMLphp (SSP) data store to add support for the MongoDB PHP library.   
 
@@ -49,7 +49,7 @@ DB_MONGODB_READ_PREFERENCE
 ```
 See the [MongoDB extension PHP Manual](http://php.net/manual/en/set.mongodb.php) for more information about appropriate values for `DB_MONGODB_REPLICASET` and `DB_MONGODB_READ_PREFERENCE`. 
 
-Finally, you can enable the module by creating an empty file name `enable` in the `vendor/simplesamlphp/simplesamlphp/modules/mongo` directory.
+Finally, you can enable the module by creating an empty file name `enable` in the `vendor/simplesamlphp/simplesamlphp/modules/mongodb` directory.
 
 **Note:** This module stores PHP session data in the `session` collection. 
 

@@ -6,7 +6,7 @@
  * code.
  *
  * @author Chris Beaton <c.beaton@prolificinteractive.com>
- * @package prolificinteractive/simplesamlphp-module-mongo
+ * @package prolificinteractive/simplesamlphp-module-mongodb
  */
 
 namespace SimpleSAML\Test\Module\mongo\Store;
